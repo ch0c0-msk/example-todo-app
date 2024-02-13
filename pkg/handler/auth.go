@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 
 	todo "github.com/ch0c0-msk/example-todo-app"
@@ -11,13 +12,13 @@ func (h *ApiHandler) signUp(c *gin.Context) {
 	var user todo.User
 
 	if err := c.BindJSON(&user); err != nil {
-		newErrorResponse(c, err, http.StatusBadRequest)
+		newErrorResponse(c, errors.New("empty required fields"), http.StatusBadRequest)
 		return
 	}
 
 	id, err := h.service.Authorization.CreateUser(user)
 	if err != nil {
-		newErrorResponse(c, err, http.StatusBadRequest)
+		newErrorResponse(c, errors.New("auth service error"), http.StatusInternalServerError)
 		return
 	}
 
